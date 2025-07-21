@@ -10,10 +10,13 @@ rear_edge_height = 18.6;
 
 // These are parameters of the hanger.
 arm_extension_past_surface = 120;
-arm_rear_width = 30;
+arm_rear_width = 4;
 arm_surface_width = 4;
 arm_thickness = 5;
 surface_lip = 3;
+buttress_height = 5;
+notch_depth = arm_thickness/2;
+notch_placement_percentage = 0.98;
 
 
 
@@ -48,18 +51,43 @@ module top_piece(thickness) {
 
 // surface lip
 module surface_lip(thickness){
-#translate([arm_rear_width/2-arm_surface_width/2, exterior_depth+thickness, rear_edge_height + thickness]){rotate([0, 90, 0]){
+#translate([0, exterior_depth+thickness, rear_edge_height + thickness]){rotate([0, 90, 0]){
     linear_extrude(arm_surface_width)right_triangle([surface_lip, surface_lip]);
 }}
 }
 
 // Extension arm projecting out from the surface
 module extension_arm(thickness) {
-    // Main arm extending outward
-    translate([(arm_rear_width - arm_surface_width)/2, exterior_depth + thickness + surface_lip, rear_edge_height + thickness]) {
-        cube([arm_surface_width, arm_extension_past_surface * 0.8, thickness]);
+    rendering_delta = 1;
+    difference(){
+
+        
+        
+        // Main arm extending outward
+        translate([0, exterior_depth + thickness + surface_lip, rear_edge_height + thickness]) {
+            cube([arm_surface_width, arm_extension_past_surface, thickness]);
+        }
+
+        translate([rendering_delta*-1, exterior_depth + thickness + surface_lip + arm_extension_past_surface*notch_placement_percentage, rear_edge_height + thickness*2 +rendering_delta*0.1
+        ]){
+            rotate([0, 90, 0]) {
+                linear_extrude(arm_surface_width + rendering_delta*2) right_triangle([notch_depth, notch_depth]);
+            }
+        }
     }
 }
+
+// buttress triangle
+module buttress(thickness){
+    translate([0, 0, rear_edge_height + thickness*2 ]){
+        rotate([90, 0, 90]) {
+            triangle_base = arm_extension_past_surface*notch_placement_percentage + exterior_depth + surface_lip + thickness;
+            triangle_height = buttress_height;
+            linear_extrude(arm_surface_width) right_triangle([triangle_base, triangle_height]);
+        }
+    }
+}
+
 
 // Main hanger assembly
 module squared_hanger(thickness = arm_thickness) {
@@ -67,8 +95,9 @@ module squared_hanger(thickness = arm_thickness) {
         back_piece(thickness);
         bottom_piece(thickness);
         top_piece(thickness);
-        extension_arm(thickness);
+        color("red")extension_arm(thickness);
         surface_lip(thickness);
+        color("green")buttress(thickness);
     }
 }
 
