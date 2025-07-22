@@ -1,5 +1,7 @@
-# Don't version control the STLs
+# Don't version control the STLs or any of the slicer files
 *.stl
+*.3mf
+*.bgcode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
