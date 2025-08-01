@@ -5,7 +5,7 @@
 $fn = $preview ? 32 : 128;
 
 // UFO Parameters
-main_disc_radius = 50;
+main_disc_radius = 50; //should be 50 in future designs
 main_disc_height = 5;
 dome_radius = 25;
 dome_height = 15;
@@ -17,7 +17,7 @@ string_hole_radius = 2;
 module string_hole(radius) {
     rotate([90, 0, 90])  
         rotate_extrude(angle=180, convexity=2)
-            translate([dome_height, 0, 0])
+            translate([1.5, 0, 0])
                 circle(r=radius);
 }
 
@@ -41,19 +41,19 @@ module ufo_body(){
 // Main UFO assembly
 module ufo() {
     union() {
+        // difference() {
+        ufo_body();
 
-        difference() {
-            ufo_body();
-            translate([0, 0, 27]){
-                sphere(r=20);
-            }
-        }
+        //     translate([-2.5, -0.75, 6]){
+        //         cube([5, 1.5, 10]);
+        //     }
+        // }
         
 
-        translate([0, 0, main_disc_height*0.625]) { // 1.59 is a magic number. Sry.
+        translate([0, 0, main_disc_height*1.49]) { // 1.59 is a magic number. Sry.
             difference() {
-                scale([0.2, 1, 0.3]){
-                    color("blue")string_hole(string_hole_radius-1.5);
+                scale([1, 1, 1]){
+                    color("blue")string_hole(0.5);
                 }
             }
         }
@@ -61,3 +61,11 @@ module ufo() {
 }
 
 ufo();
+
+// // temporary to test the cutout
+// difference() {
+//     ufo();
+//     translate([-40, -40, -7]){
+//         cube([100, 100, 14]);
+//     }
+// }
