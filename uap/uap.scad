@@ -5,13 +5,18 @@
 $fn = $preview ? 32 : 128;
 
 // UFO Parameters
-main_disc_radius = 50; //should be 50 in future designs
-main_disc_height = 5;
+disc_radius = 50; //should be 50 in future designs
+top_disc_height = 5;
+bottom_disc_height = 6;
+
 dome_radius = 25;
-dome_height = 15;
+dome_squish_factor = 0.3;
+cut_the_bottom_of_the_dome = true;
 
 // String hole parameters
 string_hole_radius = 2;
+
+
 
 // U-shaped string hole module
 module string_hole(radius) {
@@ -21,51 +26,43 @@ module string_hole(radius) {
                 circle(r=radius);
 }
 
+module dome(){
+    translate([0, 0, 0])
+        scale([1, 1, dome_squish_factor])
+            color("red")sphere(r=dome_radius);
+}
 
 module ufo_body(){
-    // Main disc body
-    translate([0, 0, main_disc_height/2])
-        cylinder(h=main_disc_height, r1=main_disc_radius, r2=main_disc_radius*0.1, center=true);
+    // top disk
+    translate([0, 0, top_disc_height/2])
+        cylinder(h=top_disc_height, r1=disc_radius, r2=disc_radius*0.1, center=true);
     
-    translate([0, 0, -main_disc_height/2])
-        cylinder(h=main_disc_height, r1=main_disc_radius*0.1, r2=main_disc_radius, center=true);
+    // bottom disk
+    translate([0, 0, -bottom_disc_height/2])
+        cylinder(h=bottom_disc_height, r1=disc_radius*0.1, r2=disc_radius, center=true);
 
-    // Top dome
-    translate([0, 0, main_disc_height/2])
-        scale([1, 1, 0.3])
-            color("red")sphere(r=dome_radius * 0.7);
+    // top dome
+    if (cut_the_bottom_of_the_dome) {
+        difference() {
+            dome();
+            // this is inordinately big but it's fine.
+            translate([-disc_radius, -disc_radius,  -disc_radius])
+                cube([disc_radius*2, disc_radius*2, disc_radius]);
+        }
+    } else {
+        dome();
+    }
 
 }
 
-
-// Main UFO assembly
 module ufo() {
     union() {
-        // difference() {
         ufo_body();
 
-        //     translate([-2.5, -0.75, 6]){
-        //         cube([5, 1.5, 10]);
-        //     }
-        // }
-        
-
-        translate([0, 0, main_disc_height*1.49]) { // 1.59 is a magic number. Sry.
-            difference() {
-                scale([1, 1, 1]){
-                    color("blue")string_hole(0.5);
-                }
-            }
+        translate([0, 0, dome_radius*dome_squish_factor-(1*(1-dome_squish_factor))]){
+            color("blue")string_hole(0.5);
         }
     }
 }
 
 ufo();
-
-// // temporary to test the cutout
-// difference() {
-//     ufo();
-//     translate([-40, -40, -7]){
-//         cube([100, 100, 14]);
-//     }
-// }
