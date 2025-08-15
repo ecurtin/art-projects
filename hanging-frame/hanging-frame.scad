@@ -3,36 +3,41 @@ $fn = $preview ? 32 : 128;
 
 render_delta = 1;
 
+frame_width_total = 60;
+frame_height = 60;
+frame_thickness = 2.5;
+frame_edge_width = 6;
+hanger_distance_from_center = frame_width_total/4;
+center_width = frame_width_total - frame_edge_width*2;
+center_height = frame_height - frame_edge_width*2;
+hole_radius = 2;
+hole_distance_from_center = 40;
 
 module hanging_frame(
-    frame_width = 150,
-    frame_height = 200,
-    frame_thickness = 2.5,
-    hanger_distance_from_center = 20,
-    center_width = 100,
-    center_height = 150,
-    hole_radius = 2,
-    hole_distance_from_center = 40
+    frame_width_total,
+    frame_height,
+    frame_thickness,
+    frame_edge_width,
+    hanger_distance_from_center,
+    center_width,
+    center_height,
+    hole_radius,
+    hole_distance_from_center
 ) {
     // Calculate half dimensions for easier positioning
-    hfw = frame_width / 2;
+    hfw = frame_width_total / 2;
     hfh = frame_height / 2;
     hcw = center_width / 2;
     hch = center_height / 2;
     
     difference() {
         // Main frame
-        cube([frame_width, frame_height, frame_thickness], center=true);
+        cube([frame_width_total, frame_height, frame_thickness], center=true);
         
         // Center cutout
         translate([0, 0, -render_delta/10])
             cube([center_width, center_height, frame_thickness + render_delta], center=true);
         
-        // Hanging holes
-        for(y = [-1, 1]) {
-            translate([0, y * hole_distance_from_center, 0])
-                cylinder(h=frame_thickness + render_delta, r=hole_radius, center=true);
-        }
     }
     
     // Hanger protrusions - flat hollow cylinders on top edge
@@ -48,5 +53,14 @@ module hanging_frame(
     }
 }
 
-// Example usage (uncomment to see the frame)
-hanging_frame();
+hanging_frame(
+    frame_width_total, 
+    frame_height, 
+    frame_thickness, 
+    frame_edge_width, 
+    hanger_distance_from_center, 
+    center_width, 
+    center_height, 
+    hole_radius, 
+    hole_distance_from_center
+);
