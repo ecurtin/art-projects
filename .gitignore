@@ -2,6 +2,7 @@
 *.stl
 *.3mf
 *.bgcode
+uap/tired-of-being-discplined-about-labeling
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -59,7 +59,7 @@ module ufo() {
     union() {
         ufo_body();
 
-        translate([0, 0, dome_radius*dome_squish_factor-(1*(1-dome_squish_factor))]){
+        translate([0, 0, dome_radius*dome_squish_factor-(1*(1-dome_squish_factor                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ))]){
             color("blue")string_hole(0.5);
         }
     }
