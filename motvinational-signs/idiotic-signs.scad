@@ -92,25 +92,52 @@ module custom_sign(
     size = calculate_sign_size(text, text_size, border_width, thickness, leading, padding);
     
     // Create the sign body
-    sign_body(size, border_width, border_height);
-    
+    difference() {
+        sign_body(size, border_width, border_height);
+
+        // you need the min() for printing really small tests
+        thumbtack_placement = min(size[1]*0.85, size[1]-4.2);
+
+        // hole for hanging
+        union() {
+            translate([size[0]/2, thumbtack_placement-4, -0.01])
+                cylinder(r1 = 4, r2 = 7, h = size[2]*0.5);
+            translate([size[0]/2, thumbtack_placement, -0.01])
+                cylinder(r1 = 2, r2 = 4, h = size[2]*0.5);
+        }
+    }
+
+
     // Position and render the text
-    translate([size[0]/2, size[1]/2, size[2] + 0.1]) {
+    translate([size[0]/2, size[1]/2, size[2] - border_height]) {
         linear_extrude(height = border_height) {
             multiLine(text, text_size, font, leading);
         }
     }
+
 }
 
-my_text = "Fallow\nYou're\nDetstiny";
+// my_text = "Fallow\nYou're\nDetstiny";
+
+// custom_sign(
+//     text = my_text,
+//     text_size = 20,
+//     font = "Twinkle Star:style=Regular",
+//     border_height = 1,
+//     border_width = 6,
+//     thickness = 4,
+//     leading = 20,
+//     padding = 30
+// );
+
+my_text = "E";
 
 custom_sign(
     text = my_text,
     text_size = 10,
-    font = "Twinkle Star:style=Regular",
+    font = "Qwitcher Grypen:style=Bold",
     border_height = 1,
-    border_width = 6,
-    thickness = 4,
-    leading = 5,
-    padding = 15
-);
+    border_width = 3,
+    thickness = 5,
+    leading = 1,
+    padding = 6);
