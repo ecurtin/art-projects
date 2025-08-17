@@ -15,15 +15,21 @@ cut_the_bottom_of_the_dome = true;
 
 // String hole parameters
 string_hole_radius = 2;
+string_hole_thickness = 1.5;
 
 
-
-// U-shaped string hole module
-module string_hole(radius) {
-    rotate([90, 0, 90])  
-        rotate_extrude(angle=180, convexity=2)
-            translate([1.5, 0, 0])
-                circle(r=radius);
+// Flat string hole with center hole
+module string_hole(radius, thickness) {
+    rotate([0, 0, 90]) {
+        difference() {
+            // Outer flat cylinder
+            cylinder(h=thickness, r=radius*1.5, center=true);
+            
+            // Center hole
+            translate([0, 0, -radius+0.5])
+                cylinder(h=radius*4, r=radius, center=true);
+        }
+    }
 }
 
 module dome(){
@@ -60,7 +66,7 @@ module ufo() {
         ufo_body();
 
         translate([0, 0, dome_radius*dome_squish_factor-(1*(1-dome_squish_factor                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ))]){
-            color("blue")string_hole(0.5);
+            color("blue")rotate([90, 0, 0])string_hole(string_hole_radius, string_hole_thickness);
         }
     }
 }

@@ -6,8 +6,6 @@ $fn = $preview ? 32 : 128;
 
 // Thank you u/obscure3
 // https://www.reddit.com/r/openscad/comments/3jwobs/comment/lvd2ex1/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-
-
 function multiLineSplit(line) =
     let(
         sep_ix = search(match_value = chr(10),              // search indices of newline chars
@@ -30,14 +28,18 @@ function multiLineSplit(line) =
     )
     lines_array;  // Return the array of strings
 
-module multiLine(my_text, size, leading) {
+module multiLine(my_text, size, font, leading) {
     lines = multiLineSplit(my_text);
+    total_height = (len(lines) - 1) * (size + leading);
+    
     union() {
         for (i = [0 : len(lines) - 1]) {
-            translate([0, -i * (size + leading), 0]) {
+            y_pos = total_height/2 - i * (size + leading);
+            translate([0, y_pos, 0]) {
                 text(
                     text = lines[i], 
-                    size = size, 
+                    size = size,
+                    font = font,
                     halign = "center", 
                     valign = "center"
                 );
@@ -61,7 +63,7 @@ module sign_body(size, border_width, border_height){
 
 
 // Function to calculate required sign size based on text
-function calculate_sign_size(text, text_size, border_width, thickness, leading) =
+function calculate_sign_size(text, text_size, border_width, thickness, leading, padding) =
     let(
         // Split text into lines
         lines = multiLineSplit(text),
@@ -71,22 +73,23 @@ function calculate_sign_size(text, text_size, border_width, thickness, leading) 
         text_width = max_line_length * text_size * 0.6,
         text_height = len(lines) * (text_size + leading) - leading,
         // Add padding
-        width = text_width + 2 * border_width + 4,
-        height = text_height + 2 * border_width + 4
+        width = text_width + padding + 2 * border_width,
+        height = text_height + padding + 2 * border_width
     )
     [width, height, thickness];
 
 module custom_sign(
     text,                          // Text to display (with \n for newlines)
     text_size = 10,               // Text size in mm
+    font = "Arial",
     border_height = 1,             // Height of the raised border
     border_width = 2,              // Width of the border
     thickness = 5,                 // Thickness of the sign
     leading = 3,                   // Space between lines
-    padding = 4                    // Padding around text
+    padding = 15                    // Padding around text
 ) {
     // Calculate required sign size
-    size = calculate_sign_size(text, text_size, border_width, thickness, leading);
+    size = calculate_sign_size(text, text_size, border_width, thickness, leading, padding);
     
     // Create the sign body
     sign_body(size, border_width, border_height);
@@ -94,18 +97,20 @@ module custom_sign(
     // Position and render the text
     translate([size[0]/2, size[1]/2, size[2] + 0.1]) {
         linear_extrude(height = border_height) {
-            multiLine(text, text_size, leading);
+            multiLine(text, text_size, font, leading);
         }
     }
 }
 
-my_text = "Follow\nYou're\nDetsiny";
+my_text = "Fallow\nYou're\nDetstiny";
 
-// Example usage
 custom_sign(
     text = my_text,
     text_size = 10,
+    font = "Twinkle Star:style=Regular",
     border_height = 1,
     border_width = 6,
     thickness = 4,
-    leading = 3);
+    leading = 5,
+    padding = 15
+);
