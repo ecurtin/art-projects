@@ -33,6 +33,20 @@ module multiLineSplit(line, size, leading){
 
 
 
+module sign_body(size, border_width, border_height){
+    difference() {
+        cube(size);
+        translate([border_width, border_width, size[2]-border_height])
+            color("blue")cube([
+                size[0] - 2 * border_width, 
+                size[1] - 2 * border_width, 
+                size[2]
+            ]);
+    }
+}
+
+
+
 module custom_sign(
     size = [100, 30, 5],      // [width, height, thickness] of base
     border_height = 1,         // Height of the raised border
@@ -44,18 +58,7 @@ module custom_sign(
 ) {
 
 
-    difference() {
-        // Base plate
-        cube(size);
-        
-            // Inner cutout for text area
-        translate([border_width, border_width, size[2]-border_height])
-            color("blue")cube([
-                size[0] - 2 * border_width, 
-                size[1] - 2 * border_width, 
-                size[2]
-            ]);
-    }
+    sign_body(size, border_width, border_height);
     
     // Calculate text scale to fit within border
     text_width = len(text) * text_size * 0.6; // Rough estimate
