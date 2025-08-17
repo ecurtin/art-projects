@@ -14,8 +14,8 @@ dome_squish_factor = 0.3;
 cut_the_bottom_of_the_dome = true;
 
 // String hole parameters
-string_hole_radius = 2;
-string_hole_thickness = 1.5;
+string_hole_radius = 3;
+string_hole_thickness = 4;
 
 
 // Flat string hole with center hole
